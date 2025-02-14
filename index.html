@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="src/css/output.css">
+</head>
+<body class="relative font-Poppins">
+    <main class='h-lvh flex justify-center items-center'>
+        <div class="w-[400px] flex flex-wrap justify-center items-center">
+            <form class="w-full relative h-[40px]" id="searchButton">
+                <input type="text" spellcheck="false" placeholder="Enter Your Location" id="searchField" class="bg-white w-full h-full ps-5 outline-0">
+                <button type="submit" class="absolute right-0 top-0 h-full w-[40px] flex justify-center items-center"><img class="h-5" src="src/img/search_24dp_434343_FILL0_wght400_GRAD0_opsz24.svg" alt=""></button>
+            </form>
+            <div class="w-full my-16">
+                <h1 id="cityName" class="text-slate-600 w-full text-center text-5xl mb-2"></h1>
+                <span class="w-full flex justify-center items-center mb-5">
+                    <img id="weatherIcon" class="h-32 mt-10" src="src/img/icons/clear-sky-day.svg" alt="">
+                    <h2 id="weatherTemperature" class="text-6xl text-blue-600"></h2>
+                </span>   
+                <h2 id="condition" class="text-[25px] text-center text-gray-800"></h2>
+                <div class="text-gray-800 flex justify-evenly">
+                    <div class="flex justify-center items-center flex-wrap w-36">
+                        <img src="src/img/icons/humidity.svg" class="h-10" alt="">
+                        <div>
+                            <h5 id="humidity" class="text-[18px]"></h5> 
+                            <h6 class="text-[16px]">Humidity</h6>       
+                        </div>
+                    </div>
+                    <div class="flex justify-center items-center flex-wrap w-36">
+                        <img src="src/img/icons/wind.svg" class="h-10" alt="">
+                        <div>
+                            <h5 id="wind" class="text-[18px]"></h5>   
+                            <h6 class="text-[16px]">Wind Speed</h6>        
+                        </div>
+                    </div>
+                </div> 
+            </div>
+            <div class="w-full  bg-white/70 rounded-2xl text-gray-800 p-4">
+                <h1 id="timeNow" class="w-full text-center text-3xl mb-2"></h1>
+                <h2 id="dateNow" class="w-full text-center text-[15px]"></h1>
+            </div>    
+        </div>
+    </main>
+    <div id="aboutMe" class="flex flex-wrap justify-between w-[300px] items-center absolute left-0 top-[50%] bg-gray-800/70 rounded-r-2xl pr-4 py-4 text-white translate-y-[-50%] translate-x-[-90%] duration-1000 animate-pulse cursor-pointer">
+        <h2 class="w-full text-center text-3xl mb-5">Developed by Hamed Moradi</h2>
+        <div class="flex justify-evenly w-full">
+            <a class="" href="https://www.linkedin.com/in/haamedmoradiidev/"><img class="h-10" src="src/img/linkedin.svg" alt=""></a>
+            <a class="" href="https://github.com/hamedmoradidev"><img class="h-10" src="src/img/github.svg" alt=""></a>
+            <a class="" href="https://instagram.com/hamed.moradi.dev"><img class="h-10" src="src/img/instagram.svg" alt=""></a>    
+        </div>
+    </div>    
+    <script>
+        const aboutMe = document.getElementById("aboutMe")
+        const searchField = document.getElementById("searchField")
+        const searchButton = document.getElementById("searchButton")
+        const cityName = document.getElementById("cityName")
+        const weatherIcon = document.getElementById("weatherIcon")
+        const weatherTemperature = document.getElementById("weatherTemperature")
+        const condition = document.getElementById("condition")
+        const wind = document.getElementById("wind")
+        const humidity = document.getElementById("humidity")
+        const timeNow = document.getElementById("timeNow")
+        const dateNow = document.getElementById("dateNow")
+        let city = "rasht"
+        const appID = 'cb445bea41f18da668d41cd93f308f85'
+        updateWeather()
+        calendar()
+        setInterval(() => {
+            updateWeather()
+            calendar()
+        }, 60000);
+        searchButton.addEventListener("submit",(ev) => {
+            ev.preventDefault()
+            city = searchField.value
+            if(city != ""){
+                updateWeather()
+            }
+        })
+        function updateWeather(){
+            fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${appID}&units=metric`)
+            .then(x => x.json())
+            .then(y =>{
+                console.log(y)
+                if(y.cod =="404"){
+                    console.log("Oops! Location not found!")
+                    return
+                }
+                let weatherCode = y.weather[0].id
+                let clear800 = weatherCode
+                let clouds80 = weatherCode.toString().slice(0,2)
+                weatherCode = weatherCode.toString().slice(0,1)
+                cityName.innerHTML = y.name
+                weatherTemperature.innerHTML = parseInt(y.main.temp)+"<small>°c</small>"
+                condition.innerHTML = y.weather[0].description
+                humidity.innerHTML = y.main.humidity+"%"
+                wind.innerHTML = parseInt(y.wind.speed)+"KM/h"
+                console.log(clear800)
+                console.log(clouds80)
+                console.log(weatherCode)
+                if(clear800 == "800"){
+                    weatherIcon.src = 'src/img/icons/clear-sky-day.svg'
+                }else if(clouds80 == "80"){
+                    weatherIcon.src = 'src/img/icons/cloudy-day.svg'
+                }else{
+                    switch (weatherCode) {
+                    case '2':
+                        weatherIcon.src = 'src/img/icons/thunderstorm-day.svg'
+                        break;
+                    case '3':
+                        weatherIcon.src = 'src/img/icons/shower-rain-day.svg'
+                        break;
+                    case '5':
+                        weatherIcon.src = 'src/img/icons/rain-day.svg'
+                        break;
+                    case '6':
+                        weatherIcon.src = 'src/img/icons/snow-day.svg'
+                        break;
+                    case '7':
+                        weatherIcon.src = 'src/img/icons/fog-day.svg'
+                        break;
+                    default:
+                        weatherIcon.src = 'src/img/icons/clear-sky-day.svg'
+                        break;
+                }
+                }
+            })
+        }
+        function calendar(){
+            const dateObject = new Date()
+            dateNow.innerHTML = dateObject.toDateString()
+            timeNow.innerHTML = dateObject.toLocaleTimeString(undefined, {timeStyle:'short'})
+        }
+        aboutMe.addEventListener("click",() => {
+            aboutMe.classList.toggle("translate-x-[-90%]")
+            aboutMe.classList.toggle("animate-pulse")
+        })
+    </script>
+</body>
+</html>

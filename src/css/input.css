@@ -1,0 +1,17 @@
+@import "tailwindcss";
+@font-face {
+    font-family: Poppins;
+    font-style: normal;
+    font-weight: 200 700;
+    src: url("../font/OpenSans-VariableFont_wdth\,wght.ttf") format("TrueType");
+  }  
+@theme {
+    --font-Poppins: "Poppins", "sans-serif";
+  }
+  body {
+    background-image: url("../img/bg-image.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    backdrop-filter: blur(5px);
+   }
+   
